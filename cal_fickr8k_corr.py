@@ -11,6 +11,8 @@ score1 = []
 score2 = []
 score3 = []
 
+mean_score = []
+
 # 打开文件并获取分数
 with open('data\ExpertAnnotations.txt','r') as ann:
     for line in ann.readlines():
@@ -18,20 +20,20 @@ with open('data\ExpertAnnotations.txt','r') as ann:
 
         _,_,tmp1,tmp2,tmp3 = line.strip().split("\t")
         # print(tmp1,tmp2,tmp3)
-
-        score1.append(tmp1)
-        score2.append(tmp2)
-        score3.append(tmp3)
+        mean_score.append((float(tmp1)+float(tmp2)+float(tmp3))/3)
+        score1.append(float(tmp1))
+        score2.append(float(tmp2))
+        score3.append(float(tmp3))
 
         # input()
 
 # 确保程序的正确性
 
-assert len(score1) == len(score2) == len(score3)
+assert len(score1) == len(score2) == len(score3) == len(mean_score)
 print("len:",len(score1))
 
 # 计算相关性
-_scores = {'A':score1,'B':score2,'C':score3}
+_scores = {'A':score1,'B':score2,'C':score3,'mean':mean_score}
 # print("scores:",scores)
 # scores = pd.DataFrame(list(zip(score1,score2,score3)),columns=['A','B','C'])
 scores = pd.DataFrame(_scores)
@@ -69,9 +71,10 @@ spearman = scores.corr('spearman')
 # print(kendall)
 # print(spearman)
 # print(pearson)
-print("pearson:",(pearson['A'][1:].sum() + pearson['B'][2])/3)
-print("spearman:",(spearman['A'][1:].sum() + spearman['B'][2])/3)
-print("kendall:",(kendall['A'][1:].sum() + kendall['B'][2])/3)
+
+# print("pearson:",(pearson['A'][1:].sum() + pearson['B'][2])/3)
+# print("spearman:",(spearman['A'][1:].sum() + spearman['B'][2])/3)
+# print("kendall:",(kendall['A'][1:].sum() + kendall['B'][2])/3)
 
 
 # 手工计算
@@ -85,3 +88,29 @@ print("kendall:",(kendall['A'][1:].sum() + kendall['B'][2])/3)
 # print(pd.Series(score1).astype(float).cov(pd.Series(score2).astype(float)))
 
 # print(pd.Series(score1).astype(float).cov(pd.Series(score2).astype(float))/(pd.Series(score1).astype(float).std()*pd.Series(score2).astype(float).std()))
+
+
+# 引用 improved Bert 中的Kendall计算方法进行计算：
+
+# # to reproduce our results on Flickr dataset
+# # 1. modify the value 'name' to 'flickr'
+# # 2. uncomment these lines
+# from scipy.stats import kendalltau
+
+# sim_scores = []
+# expert_scores = []
+# for i in range(len(samples)):
+#     sim_scores.append(samples[str(i)]['metric_result'])
+#     expert_scores.append(samples[str(i)]['score'])
+
+# Kendallta2, p_value = kendalltau(sim_scores, expert_scores)
+# print(Kendallta2, p_value)
+
+
+# 肯德尔和谐系数求解
+
+from scipy.stats import kendalltau
+
+Kendallta2, p_value = kendalltau(score3, mean_score)
+
+print(Kendallta2, p_value)
