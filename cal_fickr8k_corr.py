@@ -114,3 +114,22 @@ from scipy.stats import kendalltau
 Kendallta2, p_value = kendalltau(score3, mean_score)
 
 print(Kendallta2, p_value)
+
+# 按照 https://wiki.mbalib.com/wiki/%E8%82%AF%E5%BE%B7%E5%B0%94%E5%92%8C%E8%B0%90%E7%B3%BB%E6%95%B0  手动计算
+
+# 终究是放弃了。。。
+
+# N =  len(score1) # 被评价的个数
+# K = 3 # 评价人员个数
+
+# S = 0
+# for i in range(N):
+#     tmp1 = score1[i]+score2[i]+score3[i]
+#     tmp2 = tmp1/3
+#     tmp3 = (tmp1-tmp2) ** 2
+#     S += tmp3
+
+# # 假设没有相同等级评价
+
+# W = 12 * S /((K**2 * (N**3 -N)))
+# print (W)
